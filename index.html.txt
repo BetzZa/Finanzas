@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Calendario Financiero</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Manifest para instalar como app -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icono -->
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta name="theme-color" content="#4CAF50">
+</head>
+<body>
+
+<h1>📅 Calendario Financiero</h1>
+
+<div id="calendar"></div>
+
+<h2>Agregar movimiento</h2>
+<form id="entryForm">
+    <input type="date" id="date">
+    <input type="number" id="amount" placeholder="Cantidad">
+    
+    <select id="type">
+        <option value="gasto">Gasto</option>
+        <option value="ingreso">Ingreso</option>
+    </select>
+
+    <input type="text" id="category" placeholder="Categoría (Comida, Uber…)">
+
+    <button type="submit">Guardar</button>
+</form>
+
+<h2>Movimientos del día</h2>
+<ul id="entryList"></ul>
+
+<script src="app.js"></script>
+
+</body>
+</html>
