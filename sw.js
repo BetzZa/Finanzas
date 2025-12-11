@@ -1,4 +1,5 @@
-const CACHE_NAME = "v2"; 
+const CACHE_NAME = "v2";  // sube la versión
+
 const urlsToCache = [
     "/",
     "/index.html",
@@ -9,17 +10,7 @@ const urlsToCache = [
 
 self.addEventListener("install", event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async cache => {
-
-            for (const url of urlsToCache) {
-                try {
-                    await cache.add(url);
-                } catch (err) {
-                    console.warn("⚠️ No se pudo cachear:", url);
-                }
-            }
-
-        })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
     );
 });
 
@@ -37,6 +28,6 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
     event.respondWith(
-        caches.match(event.request).then(response => response || fetch(event.request))
+        caches.match(event.request).then(resp => resp || fetch(event.request))
     );
 });

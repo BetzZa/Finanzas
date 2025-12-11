@@ -1,11 +1,10 @@
 // ---------------------------
-// CALENDARIO
+// CALENDARIO CORREGIDO
 // ---------------------------
 import { calcularPresupuestoDelMes } from "./presupuesto.js";
 import { selectDate } from "./acciones.js";
 
 export function generateCalendar(selectedDate, entries) {
-
     const fechaInicio = localStorage.getItem("fechaInicioPresupuesto");
     const inicio = fechaInicio ? new Date(fechaInicio) : null;
 
@@ -23,13 +22,16 @@ export function generateCalendar(selectedDate, entries) {
         calendar.innerHTML += `<div class="day-header">${dayName}</div>`;
     }
 
-    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
+    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; // Lunes = 0
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const presupuestoDiario = Number(calcularPresupuestoDelMes()) || 0;
+
+    // Presupuesto diario
+    const presupuestoMensual = Number(calcularPresupuestoDelMes()) || 0;
+    const presupuestoDiario = presupuestoMensual / daysInMonth;
 
     const cards = JSON.parse(localStorage.getItem("cards") || "[]");
 
-    // Espacios vacíos
+    // Espacios vacíos antes del primer día
     for (let i = 0; i < firstDay; i++) {
         calendar.innerHTML += `<div class="empty"></div>`;
     }
@@ -38,10 +40,12 @@ export function generateCalendar(selectedDate, entries) {
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
+        // Sumar gastos del día
         const gastosDelDia = entries
             .filter(e => e.date === dateStr && e.type === "gasto")
             .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
 
+        // Determinar color
         let colorClass = "";
         if (inicio && new Date(dateStr) < inicio) {
             colorClass = "disabledDay";
@@ -53,26 +57,26 @@ export function generateCalendar(selectedDate, entries) {
             colorClass = "redDay";
         }
 
-        // Mostrar tarjetas solo dentro del día
+        // Información de tarjetas
         let cardInfoHTML = "";
 
         // Gastos con tarjeta
         entries
             .filter(e => e.date === dateStr && e.payment === "Tarjeta")
             .forEach(e => {
-                const card = cards.find(c => c.name === e.cardName);
+                const card = cards.find(c => c.id === Number(e.cardName) || c.name === e.cardName);
                 if (card) {
                     cardInfoHTML += `<div class="calendar-card gasto">
-                        ${card.name} - Gastado: $${e.amount.toFixed(2)}
+                        ${card.name} - Gastado: $${Number(e.amount).toFixed(2)}
                     </div>`;
                 }
             });
 
-        // Corte y pago
+        // Corte y pago de tarjeta
         cards.forEach(card => {
             // Corte
-            if (card.cutDate) {
-                const corteDate = new Date(card.cutDate);
+            if (card.fechaCorte) {
+                const corteDate = new Date(card.fechaCorte);
                 if (corteDate.getDate() === day && corteDate.getMonth() === month && corteDate.getFullYear() === year) {
                     cardInfoHTML += `<div class="calendar-card corte">
                         ${card.name} - Corte
@@ -80,8 +84,8 @@ export function generateCalendar(selectedDate, entries) {
                 }
             }
             // Pago
-            if (card.paymentDate) {
-                const pagoDate = new Date(card.paymentDate);
+            if (card.fechaPago) {
+                const pagoDate = new Date(card.fechaPago);
                 if (pagoDate.getDate() === day && pagoDate.getMonth() === month && pagoDate.getFullYear() === year) {
                     const pagosHoy = entries
                         .filter(e => e.date === dateStr && e.payment === "Tarjeta" && e.cardName === card.name)
@@ -93,6 +97,7 @@ export function generateCalendar(selectedDate, entries) {
             }
         });
 
+        // Renderizar día
         calendar.innerHTML += `
             <div class="day ${dateStr === selectedDate ? "selected" : ""} ${colorClass}"
                  onclick="handleDayClick('${dateStr}')">
