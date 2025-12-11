@@ -4,41 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Calendario Financiero</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- Manifest para instalar como app -->
+    <!-- MANIFEST PARA PWA -->
     <link rel="manifest" href="manifest.json">
-
-    <!-- Icono -->
-    <link rel="apple-touch-icon" href="icon.png">
-
     <meta name="theme-color" content="#4CAF50">
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>📅 Calendario Financiero</h1>
+<h1>📊 Finanzas Personales</h1>
 
-<div id="calendar"></div>
+<!-- Botón de menú superior izquierda -->
+<button id="menuBtn">🏠</button>
 
-<h2>Agregar movimiento</h2>
-<form id="entryForm">
-    <input type="date" id="date">
-    <input type="number" id="amount" placeholder="Cantidad">
-    
-    <select id="type">
-        <option value="gasto">Gasto</option>
-        <option value="ingreso">Ingreso</option>
-    </select>
+<!-- Sidebar lateral -->
+<div id="sidebar" class="sidebar">
+    <button class="tab-btn active" data-tab="calendarTab">📅 Calendario</button>
+    <button class="tab-btn" data-tab="budgetTab">💰 Presupuesto</button>
+    <button class="tab-btn" data-tab="addTab">➕ Agregar Movimiento</button>
+    <button class="tab-btn" data-tab="viewTab">📝 Movimientos</button>
+    <button class="tab-btn" data-tab="cardsTab">💳 Tarjetas</button>
+</div>
 
-    <input type="text" id="category" placeholder="Categoría (Comida, Uber…)">
+<!-- ======================== CALENDARIO ======================== -->
+<div id="calendarTab" class="tab-content active">
+    <div id="calendar"></div>
+</div>
 
-    <button type="submit">Guardar</button>
-</form>
+<!-- ======================== PRESUPUESTO ======================== -->
+<div id="budgetTab" class="tab-content">
+    <div class="small-box">
+        <h3>💰 Presupuesto del mes</h3>
+        <form id="budgetForm">
+            <div class="form-group">
+               <p id="mesActual"></p>
+               <label for="saldoTotal">Dinero disponible hoy</label>
+               <input type="number" id="saldoTotal" placeholder="Cantidad">
+            </div>
 
-<h2>Movimientos del día</h2>
-<ul id="entryList"></ul>
+            <div class="form-group">
+               <label for="inputFechaInicio">Fecha inicio</label>
+               <input type="date" id="inputFechaInicio">
+            </div>
 
-<script src="app.js"></script>
+            <button type="submit" id="saldoBtn">Guardar</button>
+            <p id="fechaMonto" style="margin-top:15px; font-weight: 600; display:none;">
+                A partir del: <span id="fechaMontoValor"></span>
+            </p>
+            <p id="gastoDiario"></p>
+        </form>      
+    </div>
+</div>
+
+<!-- ======================== AGREGAR MOVIMIENTO ======================== -->
+<div id="addTab" class="tab-content">
+    <div class="small-box">
+        <h3>➕ Agregar Movimiento</h3>
+        <form id="entryForm">
+            <div class="form-group">
+                <label for="date">Fecha:</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Cantidad:</label>
+                <input type="number" id="amount" placeholder="Cantidad" required>
+            </div>
+            <div class="form-group">
+                <label for="type">Tipo:</label>
+                <select id="type">
+                    <option value="gasto">Gasto</option>
+                    <option value="ingreso">Ingreso</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="category">Categoría:</label>
+                <input type="text" id="category" placeholder="Categoría">
+            </div>
+            <div class="form-group">
+                <label for="payment">Método de Pago:</label>
+                <select id="payment">
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                </select>
+            </div>
+
+            <div id="mesesContainer" style="display:none; margin-top:10px;">
+                <label>¿Es a meses?</label>
+                <select id="esMeses">
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select>
+
+                <div id="detalleMeses" style="display:none; margin-top:10px;">
+                    <input type="number" id="meses" placeholder="Número de meses">
+                    <input type="number" id="mensualidad" placeholder="Mensualidad calculada (editable)">
+                    <p id="ultimoPago"></p>
+                </div>
+            </div>
+
+            <button type="submit">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<!-- ======================== MOVIMIENTOS ======================== -->
+<div id="viewTab" class="tab-content">
+    <ul id="entryList"></ul>
+
+    <div id="dashboard">
+        <h2 id="resumenMes">📊 Resumen del Mes</h2>
+        <p id="totalIngresos">Ingresos: $0</p>
+        <p id="totalGastos">Gastos: $0</p>
+        <p id="saldoRestante">Saldo restante: $0</p>
+
+        <div id="progressBarContainer">
+            <div id="progressBar"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================== TARJETAS ======================== -->
+<div id="cardsTab" class="tab-content">
+    <form id="cardForm" style="margin-bottom: 20px;">
+        <input type="text" id="cardName" placeholder="Nombre de la tarjeta" required>
+        <input type="number" id="cardLimit" placeholder="Monto máximo" required>
+        <label>Fecha de corte:</label>
+        <input type="date" id="cutDate" required>
+        <label>Fecha de pago:</label>
+        <input type="date" id="paymentDate" required>
+        <button type="submit">Agregar Tarjeta</button>
+    </form>
+
+    <div id="cardsListContainer">
+        <label for="cardsList">Tarjetas agregadas:</label>
+        <select id="cardsList"></select>
+    </div>
+</div>
+
+<!-- ======================== SCRIPTS ======================== -->
+<!-- Tu archivo principal con todas las funciones (movimientos, calendario, tarjetas, IndexedDB) -->
+<script type="module" src="app.js"></script>
+
+<!-- Script para mostrar mes actual en presupuesto -->
+<script>
+    const mesNombres = [
+        "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+        "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+    ];
+    const hoy = new Date();
+    document.getElementById("mesActual").textContent =
+        mesNombres[hoy.getMonth()] + " " + hoy.getFullYear();
+</script>
+
+<!-- Service Worker -->
+<script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/sw.js")
+            .then(reg => console.log("Service Worker registrado:", reg.scope))
+            .catch(err => console.log("Error registrando Service Worker:", err));
+        });
+    }
+</script>
 
 </body>
 </html>

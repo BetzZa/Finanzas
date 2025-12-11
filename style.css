@@ -1,33 +1,354 @@
+/* ============================================================
+   ESTILOS GENERALES
+   ============================================================ */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #f4f4f4;
+    font-family: "Poppins", Arial, sans-serif;
+    margin: 0;
+    background: #f1f5f9;
+    color: #333;
 }
 
-h1, h2 {
+h1, h2, h3 {
     text-align: center;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #2d3748;
 }
 
+h1 { font-size: 28px; margin-top: 60px; }
+h2 { font-size: 20px; margin-top: 30px; }
+h3 { font-size: 16px; margin-bottom: 10px; }
+
+/* ============================================================
+   BOTÓN MENÚ / CASITA
+   ============================================================ */
+#menuBtn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 2000 !important;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 32px;
+    cursor: pointer;
+    color: #000;
+    transition: 0.2s;
+}
+
+#menuBtn:hover { transform: scale(1.2); }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 230px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: left 0.25s ease-in-out;
+    z-index: 1500 !important;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.tab-btn {
+    padding: 12px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.2s;
+    color: black;
+}
+
+.tab-btn:hover {
+    background: #4CAF50;
+    color: white;
+}
+
+.tab-btn.active {
+    background: #4CAF50;
+    color: white;
+}
+
+/* ============================================================
+   CONTENIDO DE PESTAÑAS
+   ============================================================ */
+.tab-content {
+    display: none;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.tab-content.active { display: block; }
+
+/* ============================================================
+   CALENDARIO
+   ============================================================ */
 #calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 8px;
     margin-bottom: 20px;
+}
+
+.day-header {
+    font-weight: 600;
+    text-align: center;
+    padding: 8px 0;
+    background: #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
 .day {
     background: white;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px 0;
+    border-radius: 10px;
     text-align: center;
     cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    position: relative;
 }
 
 .day:hover {
-    background: #d0ffd0;
+    background: #d9f7d9;
+    transform: scale(1.03);
 }
 
 .selected {
+    background: #4CAF50 !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+.greenDay { background-color: #2a9d8f !important; color: white; }
+.yellowDay { background-color: #f4a261 !important; color: white; }
+.redDay { background-color: #d62828 !important; color: white; }
+.disabledDay { background: #bfbfbf !important; color: #666; }
+
+.day:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.empty { visibility: hidden; }
+
+/* ============================================================
+   FORMULARIOS
+   ============================================================ */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-sizing: border-box;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e0;
+    font-size: 15px;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+
+form label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #444;
+}
+
+form input:focus,
+form select:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 6px rgba(76,175,80,0.3);
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
     background: #4CAF50;
     color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-weight: 600;
+}
+
+button:hover { background: #43a047; transform: scale(1.02); }
+
+/* ============================================================
+   TARJETAS (Formulario + Lista juntas)
+   ============================================================ */
+#cardsTab {
+    max-width: 400px;
+    margin: 20px auto 40px auto;
+    background: #fff;
+    padding: 25px 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+#cardsTab form {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    background: transparent;
+    max-width: 100%;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+#cardsTab input,
+#cardsTab select {
+    margin-bottom: 0;
+}
+
+#cardsListContainer {
+    margin-top: 25px;
+}
+
+#cardsListContainer label {
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
+}
+
+#cardsList {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1.5px solid #cbd5e0;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   LISTA DE MOVIMIENTOS
+   ============================================================ */
+#entryList {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 0;
+}
+
+.entry-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.entry-text { font-size: 15px; font-weight: 500; }
+
+.entry-gasto { color: #d62828; }
+.entry-ingreso { color: #2a9d8f; }
+
+.entry-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.deleteBtn,
+.editBtn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.deleteBtn:hover,
+.editBtn:hover { transform: scale(1.2); }
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+#dashboard {
+    padding: 15px 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+#dashboard p {
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+#progressBarContainer {
+    width: 100%;
+    background: #e0e0e0;
+    height: 20px;
+    border-radius: 10px;
+}
+
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: #2a9d8f;
+    border-radius: 10px;
+    transition: width 0.3s;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+.grid {
+    max-width: 1000px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+@media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
 }
